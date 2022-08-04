@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "cors": "^2.8.5"
+  }
+}
