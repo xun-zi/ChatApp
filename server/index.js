@@ -2,14 +2,15 @@
 const express = require('express');
 const app = express();
 const cors = require('cors')
-
+const Router = require('./Router')
 
 const IP = '127.0.0.1'
 const port = '8080'
-app.use(express.json())
-app.use(express.static('./assest'))
-app.use(cors());
 
+app.use(express.json())
+app.use('/assest',express.static('./assest'))
+app.use(cors());
+app.use(Router);
 
 let id = 1;
 const account = new Map();
@@ -19,7 +20,7 @@ app.get('/Login',(req,res) => {
     const {username,password} = req.query
     const ident = `${username}+${password}`;
     if(account.has(ident)){
-        res.send(JSON.stringify({id:account.get(ident) + '',state:true}));
+        res.send(JSON.stringify({token:account.get(ident) + '',state:true}));
     }else{
         res.send(JSON.stringify({state:false}))
     }

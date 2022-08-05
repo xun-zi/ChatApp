@@ -1,8 +1,8 @@
-import Send from "../../api/Login"
+import {Login} from "../../api"
 
 
 
 export default function(){
-    Send('1228304333','yqskeaisile1');
+    Login('1228304333','yqskeaisile1');
     return (<div>Login</div>)
 }
