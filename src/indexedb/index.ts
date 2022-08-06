@@ -68,7 +68,9 @@ export async function addMessage(data: MessageData) {
 
 export async function getMessage() {
     const store = await messagePageStoreData();
-    return getAll(store)
+    return (await getAll(store) as MessageData[]).sort((a,b) => {
+        return a.time - b.time;
+    })
 }
 
 //朋友页

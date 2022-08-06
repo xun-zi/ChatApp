@@ -25,7 +25,6 @@ export default function(){
     //             time:new Date().getTime(),
     //             message:[''],
     //         })
-
     //         const cursor =await singleOpenCursor(3);
     //         if(cursor)
     //         console.log(await cursor())

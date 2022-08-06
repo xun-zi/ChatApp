@@ -6,7 +6,6 @@ export type MessageData = {
     time:number;
     message: string;
     bell: number;
-    next:number;
 }
 
 export type friendData = {
