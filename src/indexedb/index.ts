@@ -1,5 +1,6 @@
 import { resolve } from "path";
-import { add, deleteDb, getAll, getAllToMap, getByKey, getStore, put, StoreData } from "./public";
+import { friendData, MessageData, singleData, singleDataHead, singleDataNext, StoreData } from "./dbType";
+import { add, deleteByIndex, deleteDb, getAll, getByKey, getStore, put } from "./public";
 let db: IDBDatabase | undefined;
 export function getDb() {
     const username = localStorage.getItem('username')
@@ -21,104 +22,127 @@ export function getDb() {
 
     require.onupgradeneeded = function (event) {
         db = require.result;
+        //消息页聊天信息
         const messagePage = db.createObjectStore('messagePage', {
             keyPath: 'uuid',
         })
         messagePage.createIndex('uuid', 'uuid', { unique: true })
-        messagePage.add({
-            uuid: 0,
-            message: '',
-            bell: '',
-            next: -1,
-            pre: -1,
-        });
-        messagePage.add({
-            uuid: -1,
-            message: '',
-            bell: '',
-            next: 0,
-            pre: 0,
-        });
+        messagePage.createIndex('time', 'time', { unique: false })
+        //朋友基本数据
         const friendData = db.createObjectStore('friendData', {
             keyPath: 'uuid'
         })
         friendData.createIndex('uuid', 'uuid', { unique: true })
+
+        //单聊页信息
         const singleData = db.createObjectStore('singleData', {
             keyPath: 'index',
             autoIncrement: true
         })
         singleData.createIndex('index', 'index')
         singleData.createIndex('uuid', 'uuid', { unique: false });
+        singleData.add({
+            index: 0,
+            length: 1,
+        })
     }
 }
 
-
-export async function puTfriendData(data: { uuid: string | number }) {
-    const db = await getDb();
-    // console.log(db)
-    // store.put(data);
-    if (!db) console.log('数据库未被打开')
-    const store: [IDBDatabase, string] = [db as IDBDatabase, 'friendData'];
-    put(store, data)
-}
-
-export type MessageData = {
-    uuid: number;
-    message: string;
-    bell: Number;
-    pre: number;
-    next: number;
-}
-
-export type MessageList = {
-    uuid:number
-    message:string;
-    bell:Number;
-}
-
-async function getMessagestore(): Promise<[IDBDatabase, string]> {
+async function getStoreData(storeName: string): Promise<StoreData> {
     const db = await getDb();
     if (!db) console.log('数据库未被打开')
-    return [db as IDBDatabase, 'messagePage']
+    return [
+        db as IDBDatabase,
+        storeName,
+    ]
+}
+//消息页
+async function messagePageStoreData(): Promise<StoreData> {
+    return await getStoreData('messagePage');
 }
 
-
-async function NodeDelete(key:number) {
-    if(key === -1 || key === 0)return;
-    let store = await getMessagestore();
-    const midddleNode = await getByKey(store,key) as MessageData;
-    if(!midddleNode)return;
-    const pre = await getByKey(store,midddleNode.pre) as MessageData;
-    const end = await getByKey(store,midddleNode.next) as MessageData;
-    pre.next = end.uuid;
-    end.pre = pre.uuid;
-    await put(store,pre);
-    await put(store,end);
-    await deleteDb(store,key);
+export async function addMessage(data: MessageData) {
+    const store = await messagePageStoreData();
+    put(store, data);
 }
 
-export async function adDMessageData(data: MessageData) {
-    let store = await getMessagestore();
-    let dummy = await getByKey(store, 0) as MessageData;
-    
-    const MessageData: MessageData = Object.assign({},data, { next: dummy.next, pre: 0 });
-    await NodeDelete(data.uuid);
-    dummy = await getByKey(store, 0) as MessageData;
-    const second = await getByKey(store, dummy.next) as MessageData;
-
-    second.pre = data.uuid;
-    dummy.next = data.uuid;
-    
-    await put(store,dummy)
-    await put(store,second);
-    await put(store,MessageData)
+export async function getMessage() {
+    const store = await messagePageStoreData();
+    return getAll(store)
 }
 
-
-export async function getAllMessageData(){
-    const store = await getMessagestore();
-    const Data = await getAllToMap(store);
-    return Data
+//朋友页
+async function friendStoreData() {
+    return await getStoreData('friendData');
 }
 
+export async function putfriend(data: friendData) {
+    const store = await friendStoreData();
+    put(store, data);
+}
+
+export async function getFriend(key: number) {
+    const store = await friendStoreData();
+    return await getByKey(store, key);
+}
+
+export async function getAllFriend() {
+    const store = await friendStoreData();
+    return await getAll(store);
+}
+
+//单聊页
+async function singleStoreData() {
+    return await getStoreData('singleData')
+}
+
+async function singleHeadData():Promise<singleDataHead>{
+    const store = await singleStoreData();
+    const head = (await getByKey(store, 0)) as singleDataHead;
+    return head;
+}
+
+export async function addsingle(uuid: number, data: singleData) {
+    const store = await singleStoreData();
+    const head = (await getByKey(store, 0)) as singleDataHead;
+    if (!head[uuid]) {
+        head[uuid] = head.length++;
+        put(store,head);
+        await add(store, {
+            index: head[uuid],
+            next: -1,
+            data,
+        })
+    } else {
+        let headData = await getByKey(store, head[uuid]) as singleDataNext;
+        if (data.time - headData.data.time <= 1000 * 5) {
+            headData.data.message = [...headData.data.message, ...data.message]
+            put(store, headData);
+        } else {
+            console.log(headData.data.time);
+            await add(store, {
+                index: head.length,
+                data,
+                next: head[uuid],
+            })
+            head[uuid] = head.length++;
+            put(store,head);
+        }
+    }
+}
+
+export async function singleOpenCursor(uuid:number) {
+    let cursor = (await singleHeadData())[uuid];
+    const store = await singleStoreData()
+    if(!cursor)return false;
+    return async function (){
+        const list:singleData[] = [];
+        while(cursor != -1){
+            let data = await getByKey(store,cursor) as singleDataNext;
+            list.push(data.data);
+            cursor = data.next;
+        }
+        return list
+    }
+}
 

@@ -1,28 +1,47 @@
 import React from "react";
 import { getPresonDate } from "../../api";
-import { adDMessageData, getAllMessageData, MessageData, puTfriendData } from "../../indexedb";
+import { addMessage, getMessage } from "../../indexedb";
+import { MessageData } from "../../indexedb/dbType";
+import { deleteDb } from "../../indexedb/public";
 
 export default function():React.ReactElement{
-    
-    (async () => {
-        await adDMessageData({
-            uuid:5,
-            message:'',
-            bell:0,
-            next:0,
-            pre:0,
+     (async () => {
+        await addMessage({
+         uuid:1,
+         time:new Date().getTime(),
+         message:'',
+         bell:0,
+         next:0,
         })
 
-        const map= await getAllMessageData();
-        
-        console.log(map)
-        const Data:MessageData[] = [];
-        let cur = map.get(0) as MessageData;
-        console.log(Data);
-    })()
-    
-    
-     
-    
+        await addMessage({
+         uuid:2,
+         time:new Date().getTime(),
+         message:'',
+         bell:0,
+         next:0,
+        })
+
+        await addMessage({
+         uuid:3,
+         time:new Date().getTime(),
+         message:'',
+         bell:0,
+         next:0,
+        })
+        await addMessage({
+         uuid:4,
+         time:new Date().getTime(),
+         message:'',
+         bell:0,
+         next:0,
+        })
+
+        const data = await getMessage();
+        data.sort((a:MessageData,b:MessageData):number => {
+            return a.time - b.time
+        })
+        console.log(data);
+     })();
     return (<div>消息页</div>)
 }
