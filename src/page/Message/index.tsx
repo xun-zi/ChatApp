@@ -46,9 +46,15 @@ export default function (): React.ReactElement {
     //     console.log(data);
     //  })();
 
-    const messageList = useSelector((state: any) => state.messageList.messageList) as MessageData[];
+    const messageList = useSelector((state: any) => state.messageList) as MessageData[];
     const {preInsert} = messageListSlice.actions
     const dispatch  = useDispatch();
+    dispatch(preInsert([{
+        uuid:0,
+        time:0,
+        message:'',
+        bell:0,
+    }]));
     useEffect(() => {
         if (messageList.length === 0) {
             (async function(){
