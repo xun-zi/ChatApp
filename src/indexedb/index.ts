@@ -78,7 +78,7 @@ async function friendStoreData() {
     return await getStoreData('friendData');
 }
 
-export async function putfriend(data: friendData) {
+export async function putFriend(data: friendData) {
     const store = await friendStoreData();
     put(store, data);
 }

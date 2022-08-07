@@ -11,4 +11,11 @@ const debounce = (func, delay) => {
     };
 };
 
-export { debounce }
+const once = (func) => {
+    return function(...args){
+        if(func)return;
+        func.apply(this,args);
+    }
+}
+
+export { debounce,once }

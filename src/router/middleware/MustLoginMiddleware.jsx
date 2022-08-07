@@ -3,7 +3,7 @@ import  {router}  from '..'
 import { getDb } from '../../indexedb/index';
 
 export class MustLoginMiddleware extends Middleware {
-  handler = async (ctx, next) => {
+  handler = async (context, next) => {
     const token = localStorage.getItem('token');
     // console.log(token);
     if (token) {

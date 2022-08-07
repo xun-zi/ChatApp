@@ -13,6 +13,5 @@ export async function Login(username:string,password:string){
 
 export async function getPresonDate(id:string) {
     const data = (await Ajax(`/data/${id}`)).data
-    
     return data;
 }
