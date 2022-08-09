@@ -10,7 +10,7 @@ export type MessageData = {
 
 export type friendData = {
     uuid:number;
-    name:string;
+    userName:string;
     picture:string;
 }
 

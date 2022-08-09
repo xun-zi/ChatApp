@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react'
-import { Router } from 'oh-router';
-import { Outlet } from 'oh-router-react';
 import { MustLoginMiddleware } from './middleware/MustLoginMiddleware';
+import Navigation from '../components/Navigation/Navigation';
+import { Outlet, RouteObject } from 'react-router-dom';
 
 
 
@@ -11,35 +11,42 @@ const Login = lazy(() => import('../page/Login'));
 const AddressList = lazy(() => import('../page/AddressList'));
 const SingleChat = lazy(() => import('../page/SingleChat'))
 
-const BottomNavigatin = () => {
-    return (<div>导航栏 <Outlet/></div>)
+
+const Layout = () => {
+    return (
+        <div className='layout'>
+            <div style={{flex:'1'}}>
+                <Suspense fallback={null}>
+                    <Outlet />
+                </Suspense>
+            </div>
+            <Navigation />
+        </div>
+    )
 }
 
-export const router = new Router({
-    routes:[
-        {
-            path:'Login',
-            element:<Login/>
-        },
-        {
-            path:'/',
-            element:<BottomNavigatin/>,
-            children:[{
-                path:'Find',
-                element:<Find/>
-            },{
-                path:'Message',
-                element:<Message/>
-            },{
-                path:'AddressList',
-                element:<AddressList/>
-            },{
-                path:'SingleChat',
-                element:<SingleChat/>
-            }]
-        },
-    ],
-    middlewares:[ new MustLoginMiddleware()],
-})
+export const router: RouteObject[] = [
+    {
+        path: '/Login',
+        element: <Login />
+    },
+    {
+        path: '/',
+        element: <Layout />,
+        children: [{
+            path: 'Find',
+            element: <Find />
+        }, {
+            path: 'Message',
+            element: <Message />
+        }, {
+            path: 'AddressList',
+            element: <AddressList />
+        }, {
+            path: 'SingleChat',
+            element: <SingleChat />
+        }]
+    },
+]
 
 

@@ -1,13 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { MessageData } from "../../../indexedb/dbType";
 
+export type MessageRedux = {
+    state:boolean,
+    messageList:MessageData[]
+}
 
 export const messageListSlice = createSlice({
-    name: 'messageList',
-    initialState: [],
+    name: 'message',
+    initialState: {
+        state:false,
+        messageList:[]
+    } as MessageRedux,
     reducers: {
-        preInsert: (state: MessageData[], data: PayloadAction<MessageData[]>) => {
-            state.unshift(...data.payload);
+        preInsert: (state, data: PayloadAction<MessageData[]>) => {
+            state.state = true;
+            state.messageList.unshift(...data.payload)
         },
     }
 })

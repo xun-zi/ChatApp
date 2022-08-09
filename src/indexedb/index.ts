@@ -2,21 +2,22 @@ import { resolve } from "path";
 import { friendData, MessageData, singleData, singleDataHead, singleDataNext, StoreData } from "./dbType";
 import { add, deleteByIndex, deleteDb, getAll, getByKey, getStore, put } from "./public";
 let db: IDBDatabase | undefined;
-export function getDb() {
+export async function getDb() {
     const username = localStorage.getItem('username')
     if (!username) {
         console.log('username不存在');
         return;
     }
     if (db) return Promise.resolve(db);
+   return new Promise((resolve) => {
     const require = indexedDB.open(username, 1);
     require.onsuccess = function (event) {
         db = require.result;
-        return Promise.resolve(db)
-
+        return resolve(db)
     }
 
     require.onerror = function (event) {
+        if(db)resolve(db);
         console.log('数据库打开失败');
     }
 
@@ -46,6 +47,7 @@ export function getDb() {
             length: 1,
         })
     }
+   })
 }
 
 async function getStoreData(storeName: string): Promise<StoreData> {
@@ -88,9 +90,9 @@ export async function getFriend(key: number) {
     return await getByKey(store, key);
 }
 
-export async function getAllFriend() {
+export async function getAllFriend():Promise<friendData[]> {
     const store = await friendStoreData();
-    return await getAll(store);
+    return await getAll(store) ;
 }
 
 //单聊页
