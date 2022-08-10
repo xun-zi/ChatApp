@@ -1,0 +1,19 @@
+$type:friend;
+.ChatBar{
+    font-size: 28px;
+    display: flex;
+    padding: 5px;
+    .ChatMessage{
+        background-color: white;
+        border-radius: 5px;
+        margin: 0 5px;
+        font-family:'Courier New', Courier, monospace
+    }
+}
+
+.ChatOwn{
+    flex-direction: row-reverse;
+    .ChatMessage{
+        background-color: rgb(149, 236, 105);
+    }
+}

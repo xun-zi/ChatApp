@@ -2,12 +2,13 @@ import { List, Image } from "antd-mobile";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getPresonDate } from "../../api";
-import { addMessage, getAllFriend, getFriend, getMessage, putFriend } from "../../indexedb";
-import { friendData, MessageData } from "../../indexedb/dbType";
-import { deleteDb } from "../../indexedb/public";
+import {  addsingle, getAllFriend, getFriend, getAllMessage, putFriend, putMessage, singleOpenCursor } from "../../indexedb";
 import { messageListSlice, MessageRedux } from "./store";
 import { useNavigate } from "react-router-dom";
 import { friendRedux, friendSlice } from "../../store/friendSlice";
+import { MessageData } from "../../indexedb/dbType";
+import { subscribeDelete, subscribeFn } from "../../api/longPoll";
+
 
 export type MessageRender = {
     uuid:number,
@@ -26,10 +27,12 @@ export default function (): React.ReactElement {
     const {insert} = friendSlice.actions
     const dispatch = useDispatch();
 
+    const [messageDate,setMessageData] = useState<MessageData[]>([]);
+
     useEffect(() => {
         if (!messageRedux.state) {
             (async function () {
-                const data = await getMessage();
+                const data = await getAllMessage();
                 dispatch(preInsert(data))
             })()
         }
@@ -38,20 +41,51 @@ export default function (): React.ReactElement {
                 dispatch(insert(await getAllFriend()))
             })()
         }
+
+        // putMessage({
+        //     uuid:2,
+        //     message:'你好',
+        //     bell:0,
+        //     time:new Date().getTime(),
+        // })
     }, []);
+
+    useEffect(() => {
+        const handle = () => {
+            getAllMessage().then((data) => {
+                data.sort((a,b) => {
+                    return a.time - b.time
+                })
+                setMessageData(data);
+            })
+        }
+        handle()
+        subscribeFn((data)=>{
+            handle()
+        })
+        return () => {
+            subscribeDelete(handle)
+        }
+    },[])
 
 
     const navigate = useNavigate();
     const skip = (id:number) => {
         navigate(`/singleChat?id=${id}`)
     }
-
-    const message:MessageRender[] = messageRedux.messageList.map((data) => {
-
-        return Object.assign({},data,friendRedux.friend[data.uuid] || {userName:'',picture:''});
+    
+    const message:MessageRender[] = messageDate.map((data) => {
+        const PresonData = friendRedux.friend[data.uuid];
+        if(!PresonData){
+            getPresonDate(data.uuid + '').then((data) => {
+                dispatch(insert([data]));
+                putFriend(data);
+            })
+        }
+        return Object.assign({},data,PresonData || {userName:'',picture:''});
     })
 
-    // console.log(message);
+    console.log(message);
     return (
         <List >
             {message.map(user => (

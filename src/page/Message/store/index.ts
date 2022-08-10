@@ -17,5 +17,8 @@ export const messageListSlice = createSlice({
             state.state = true;
             state.messageList.unshift(...data.payload)
         },
+        put:(state,data: PayloadAction<MessageData[]>) => {
+            
+        }
     }
 })

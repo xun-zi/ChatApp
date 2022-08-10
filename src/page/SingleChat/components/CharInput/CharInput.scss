@@ -1,0 +1,13 @@
+.ChatInput{
+    width: 100vw;
+    display: flex;
+
+    >div{
+        margin: 0 7px;
+    }
+
+    .textInput{
+        margin: 1px 2px;
+        flex: 1!important;
+    }
+}

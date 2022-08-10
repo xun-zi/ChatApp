@@ -14,9 +14,14 @@ export type friendData = {
     picture:string;
 }
 
+export type IdMessage = {
+    uuid:number,
+    message:string
+}
+
 export type singleData = {
     time:number;
-    message:string[];
+    message:IdMessage[];
 }
 
 export type singleDataNext = {

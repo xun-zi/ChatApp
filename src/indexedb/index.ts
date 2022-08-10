@@ -63,12 +63,19 @@ async function messagePageStoreData(): Promise<StoreData> {
     return await getStoreData('messagePage');
 }
 
-export async function addMessage(data: MessageData) {
+export async function putMessage(data: MessageData) {
     const store = await messagePageStoreData();
     put(store, data);
 }
 
-export async function getMessage() {
+export async function getMessage(key:number):Promise<MessageData|undefined>{
+    const store = await messagePageStoreData();
+    return await getByKey(store,key) as MessageData|undefined
+}
+
+
+
+export async function getAllMessage() {
     const store = await messagePageStoreData();
     return (await getAll(store) as MessageData[]).sort((a,b) => {
         return a.time - b.time;
@@ -133,18 +140,21 @@ export async function addsingle(uuid: number, data: singleData) {
             put(store,head);
         }
     }
+    
 }
 
 export async function singleOpenCursor(uuid:number) {
     let cursor = (await singleHeadData())[uuid];
     const store = await singleStoreData()
     if(!cursor)return false;
-    return async function (){
+    return async function (page:number){
         const list:singleData[] = [];
-        while(cursor != -1){
-            let data = await getByKey(store,cursor) as singleDataNext;
-            list.push(data.data);
-            cursor = data.next;
+        let cnt = 0;
+        while(cursor != -1 && cnt < page){
+            let singleDataNext = await getByKey(store,cursor) as singleDataNext;
+            cnt += singleDataNext.data.message.length;
+            list.push(singleDataNext.data);
+            cursor = singleDataNext.next;
         }
         return list
     }

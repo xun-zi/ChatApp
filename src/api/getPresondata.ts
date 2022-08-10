@@ -1,1 +1,0 @@
-import Ajax from "./public/ajax";
