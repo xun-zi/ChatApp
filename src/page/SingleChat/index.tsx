@@ -96,9 +96,16 @@ export default function () {
             async function loadMore() {
                 if (cursor) {
                     const data = await cursor(20);
-                    console.log(data)
+                    data.reverse();
                     setUserMessage((state) => {
-                        return [...data.reverse(),...state];
+                        if(!data.length)return state;
+                        if(!state.length)return data;
+                        const [back] = data.slice(-1);
+                        if(back.time === state[0].time){
+                            state[0].message = [...back.message,...state[0].message];
+                            data.pop()
+                        }
+                        return [...data,...state];
                     })
                 }
 
@@ -109,7 +116,6 @@ export default function () {
             },100)
             const sonstantScroll = () => {
                 if (!ref.current?.getBoundingClientRect()) return;
-                // console.log(ref.current.scrollTop)
                 if (!ref.current?.scrollTop) {
                     loadMore()
                 }
@@ -127,12 +133,8 @@ export default function () {
         const timer = setInterval(async () => {
             const onchangeHeight = El.scrollHeight - heigh;
             if(onchangeHeight){
-                console.log(El.scrollTop)
-                console.log(onchangeHeight,El.scrollHeight,heigh)
                 El.scrollTo(0,El.scrollTop + onchangeHeight);
                 heigh = El.scrollHeight;
-                console.log(El.scrollTop)
-                console.log('变化')
             }
             
             

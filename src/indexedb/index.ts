@@ -158,8 +158,6 @@ export async function singleOpenCursor(uuid: number) {
 
 
     return async function (page: number) {
-        console.log(len)
-        console.log('list',list);
         while (cursor != -1 && len < page) {
             let singleDataNext = await getByKey(store, cursor) as singleDataNext;
             len += singleDataNext.data.message.length;
