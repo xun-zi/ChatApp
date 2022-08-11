@@ -13,9 +13,28 @@ export type subscribeData = {
 }
 export type subscriber = (data:singleDataObject) => void;
 const subscriber = new Set<subscriber>()
-export  async function getMessageRequest(url: string) {
-    const username = localStorage.getItem('username');
-    const token = localStorage.getItem('token');
+
+subscribeFn(DataStorage);
+async function DataStorage(data:singleDataObject){
+    for(const key in data){
+        const data_1 = data[key];
+        for(const value of data_1){
+            await addsingle(+key,value);
+        }
+        if(data_1.length){
+            const [val] = data_1.slice(-1);
+            const val1 = await getMessage(+key);
+            await putMessage({
+                uuid:+key,
+                message:val.message?.at(-1)?.message || '系统错误',
+                time:val.time,
+                bell:val1 ? val1.bell + 1 : 1,
+            });
+        }
+    }
+}
+
+export  async function getMessageRequest(url: string,username:string,token:string) {
     const response = await Ajax(url,{
         username,
         token,
@@ -32,35 +51,22 @@ export  async function getMessageRequest(url: string) {
 
         const data = subscribeDataToSingleData(_data);
 
-        for(const key in data){
-            const data_1 = data[key];
-            for(const value of data_1){
-                await addsingle(+key,value);
-            }
-            if(data_1.length){
-                const [val] = data_1.slice(-1);
-                const val1 = await getMessage(+key);
-                await putMessage({
-                    uuid:+key,
-                    message:val.message?.at(-1)?.message || '系统错误',
-                    time:val.time,
-                    bell:val1 ? val1.bell + 1 : 1,
-                });
-            }
-        }
-
-        //将消息存入indexeddb
-        subscriber.forEach((fn) => {
-             fn(data);
-        })
-        getMessageRequest(url);
+        //执行订阅的人
+        resolveSubscriber(data);
+        
+        getMessageRequest(url,username,token);
     }else{
         setTimeout(()=>{
-            getMessageRequest(url);
+            getMessageRequest(url,username,token);
         },1000)
     }
 }
 
+export function resolveSubscriber(data:singleDataObject){
+    subscriber.forEach((fn) => {
+        fn(data);
+   })
+}
 
 export function subscribeFn(fn:subscriber){
     subscriber.add(fn)

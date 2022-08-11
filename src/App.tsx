@@ -19,7 +19,7 @@ function App() {
             navigate('/Login')
         }else {
           dispatch(put({username,token}))
-          getMessageRequest('/getMessage');
+          getMessageRequest('/getMessage',username,token);
         }
     },[])
 

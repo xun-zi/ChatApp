@@ -54,7 +54,7 @@ export default function (): React.ReactElement {
         const handle = () => {
             getAllMessage().then((data) => {
                 data.sort((a,b) => {
-                    return a.time - b.time
+                    return b.time - a.time
                 })
                 setMessageData(data);
             })
@@ -85,7 +85,7 @@ export default function (): React.ReactElement {
         return Object.assign({},data,PresonData || {userName:'',picture:''});
     })
 
-    console.log(message);
+
     return (
         <List >
             {message.map(user => (

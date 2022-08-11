@@ -1,0 +1,16 @@
+.Login{
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    form{
+        width: 100vw;
+    }
+    input{
+        font-size: 8vw;
+        width: 100vw;
+        height: 10vw;
+        margin: 3vw 0;
+    }
+}
