@@ -36,11 +36,12 @@ const Navigation = () => {
       badge: '99+',
     },
     {
-      key: '/singleChat',
+      key: '/Login',
       title: '登录',
       icon: <UserOutline />,
     },
   ]
+  
 
   const [activeKey, setActiveKey] = useState('todo')
   const { pathname } = useLocation();
@@ -48,6 +49,9 @@ const Navigation = () => {
   const setRouteActive = (value: string) => {
     Navigate(value);
   }
+
+  
+
   return (
       <TabBar
         activeKey={pathname}

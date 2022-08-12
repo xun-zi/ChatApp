@@ -1,4 +1,4 @@
-import { NavBar, Space } from "antd-mobile";
+import { Modal, NavBar, Space } from "antd-mobile";
 import { AddCircleOutline, MoreOutline } from "antd-mobile-icons";
 import { Suspense } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -8,11 +8,15 @@ import Navigation from "../../components/Navigation/Navigation";
 const TopNavigation = ({tittle}:{tittle:string}) => {
     const navigate = useNavigate();
     const right = (
-        <div style={{ fontSize: 24 }}>
+        <div style={{ fontSize: 24 }} onClick={() => {
+            navigate('/searchFriend')
+        }
+          }>
             <Space style={{ '--gap': '16px' }}>
                 <AddCircleOutline />
             </Space>
         </div>
+
     )
 
     const back = () => {

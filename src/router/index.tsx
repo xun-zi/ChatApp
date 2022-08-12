@@ -7,6 +7,8 @@ import SingleChat from '../page/SingleChat';
 import { NavBar } from 'antd-mobile';
 import TopNavigation from '../page/SingleChat/compontent/TopNavigation/TopNavigation';
 import Layout from '../page/Layout/Layout';
+import SearchFriend from '../page/SearchFriend/SearchFriend';
+
 
 
 
@@ -22,10 +24,13 @@ const AddressList = lazy(() => import('../page/AddressList'));
 export const router: RouteObject[] = [
     {
         path: '/Login',
-        element: <Login />
+        element: <Suspense><Login /></Suspense>
     }, {
         path: 'SingleChat',
         element: <SingleChat />
+    },{
+        path:'searchFriend',
+        element:<SearchFriend/>
     },
     {
         path: '/',
@@ -39,7 +44,7 @@ export const router: RouteObject[] = [
         }, {
             path: 'AddressList',
             element: <AddressList />
-        }]
+        },]
     },
 ]
 
