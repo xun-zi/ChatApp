@@ -17,6 +17,7 @@ import { subscribeDelete, subscribeFn, subscriber, } from '../../api/longPoll'
 import { singleDataObject, subscribeDataToSingleData } from '../../dataDeformation/dateDeformation'
 import { debounce } from '../../api/public/utils'
 import { solveScrollPosition } from '../../sundryFunction/solveScroll/resize_position'
+import TopNavigation from './compontent/TopNavigation/TopNavigation'
 
 const mock = {
     message: '1111',
@@ -147,6 +148,7 @@ export default function () {
 
     return (
         <div className='singlePage'>
+            <TopNavigation tittle={friendIt.userName}/>
             <div className='singlecontent' ref={ref}>
                 {
                     userMessage.map(({ time, message }: singleData, index) => {

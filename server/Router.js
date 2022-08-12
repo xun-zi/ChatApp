@@ -29,12 +29,42 @@ Router.get('/Login', (req, res) => {
     }
 })
 
-Router.get('/data/:id', (req, res) => {
-    import(`./assest/${req.params.id}/userData.js`).then((data) => {
-        data.default.picture = `http://127.0.0.1:8080/assest/${req.params.id}/picture.jpg`
-        data.default.uuid = req.params.id
-        res.send(JSON.stringify(data.default));
+const getBasicMessage = (id) => {
+    // console.log(id)
+    return new Promise((resolve) => {
+        import(`./assest/${id}/userData.js`).then((data) => {
+            data.default.picture = `http://127.0.0.1:8080/assest/${id}/picture.jpg`
+            data.default.uuid = id
+            resolve(data.default)
+        })
     })
+}
+
+
+
+Router.get('/data/:id', (req, res) => {
+   const data =  getBasicMessage(req.params.id)
+   data.then((data)=>{
+    res.send(data)
+   })
+})
+let friendList = new Map();
+friendList.set('1228304333',new Set())
+friendList.set('2',new Set())
+friendList.get('1228304333').add('2')
+friendList.get('2').add('1228304333')
+Router.get('/friend/:id',(req,res) => {
+    // console.log(req.params)
+    const {id} = req.params;
+    (async function(){
+        const myFriend = friendList.get(id);
+        // console.log(myFriend)
+        const data = [];
+        for(let x of myFriend){
+            data.push(await getBasicMessage(x));
+        }
+        res.send(data);
+    })();
 })
 
 const userMessage = new Map();

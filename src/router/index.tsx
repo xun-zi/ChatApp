@@ -4,6 +4,9 @@ import { Outlet, RouteObject, useMatch, useNavigate } from 'react-router-dom';
 import { accountSlice } from '../store/accountSlice';
 import { useDispatch } from 'react-redux';
 import SingleChat from '../page/SingleChat';
+import { NavBar } from 'antd-mobile';
+import TopNavigation from '../page/SingleChat/compontent/TopNavigation/TopNavigation';
+import Layout from '../page/Layout/Layout';
 
 
 
@@ -14,32 +17,19 @@ const AddressList = lazy(() => import('../page/AddressList'));
 
 
 
-const Layout = () => {
-    
-    return (
-        <div className='layout'>
-            
-            <div style={{flex:'1',overflow:'auto'}}>
-                <Suspense fallback={null}>
-                    <Outlet />
-                </Suspense>
-            </div>
-            <Navigation />
-        </div>
-    )
-}
+
 
 export const router: RouteObject[] = [
     {
         path: '/Login',
         element: <Login />
-    },{
+    }, {
         path: 'SingleChat',
-        element: <SingleChat/>
+        element: <SingleChat />
     },
     {
         path: '/',
-        element: <Layout />,
+        element: <Layout/>,
         children: [{
             path: 'Find',
             element: <Find />,

@@ -2,7 +2,7 @@ import { subscribeData } from "../api/longPoll";
 import { singleData } from "../indexedb/dbType";
 
 export type singleDataObject = {
-    [uuid:number]:singleData[]
+    [uuid:string]:singleData[]
 }
 
 export function subscribeDataToSingleData(data:subscribeData):singleDataObject{
