@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate, useRoutes } from 'react-router-dom';
-import { getMessageRequest } from './api/longPoll';
+import { getMessageRequest } from './api/reciveMessage';
 import { router } from './router';
 import { accountSlice } from './store/accountSlice';
 

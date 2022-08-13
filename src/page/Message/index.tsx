@@ -7,7 +7,7 @@ import { messageListSlice, MessageRedux } from "./store";
 import { useNavigate } from "react-router-dom";
 import { friendRedux, friendSlice } from "../../store/friendSlice";
 import { MessageData } from "../../indexedb/dbType";
-import { subscribeDelete, subscribeFn } from "../../api/longPoll";
+import { subscribeDelete, subscribeFn } from "../../api/reciveMessage";
 import { singleDataObject } from "../../dataDeformation/dateDeformation";
 
 

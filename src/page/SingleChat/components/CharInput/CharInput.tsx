@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import { SendMessage } from "../../../../api";
-import { resolveSubscriber } from "../../../../api/longPoll";
+import { resolveSubscriber } from "../../../../api/reciveMessage";
 import { addsingle } from "../../../../indexedb";
 import { accountSlice } from "../../../../store/accountSlice";
 import './CharInput.scss'

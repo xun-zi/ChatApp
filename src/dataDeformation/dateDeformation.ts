@@ -1,4 +1,4 @@
-import { subscribeData } from "../api/longPoll";
+import { subscribeData } from "../api/reciveMessage";
 import { singleData } from "../indexedb/dbType";
 
 export type singleDataObject = {
