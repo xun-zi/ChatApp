@@ -130,7 +130,7 @@ export async function addsingle(uuid: number, data: singleData) {
     } else {
         let headData = await getByKey(store, head[uuid]) as singleDataNext;
         if (data.time - headData.data.time <= 1000 * 5) {
-            headData.data.message = [...headData.data.message, ...data.message]
+            headData.data.message = data.message;
             await put(store, headData);
         } else {
             console.log(headData.data.time);
