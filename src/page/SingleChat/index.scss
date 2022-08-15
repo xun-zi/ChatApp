@@ -1,0 +1,17 @@
+.singlePage{
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    h6{
+        width: 100vw;
+        text-align: center;
+    }
+}
+
+.singlecontent{
+    background-color: rgb(245, 245, 245);
+    width: 100vw;
+    flex: 1;
+    overflow: auto;
+}
